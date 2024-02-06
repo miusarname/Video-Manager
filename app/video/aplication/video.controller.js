@@ -5,7 +5,8 @@ import {
     updateVideo,
     deleteVideo,
     getVideosByLikes,
-    addCommentToVideo
+    addCommentToVideo,
+    likeVideo
   } from "../infrastructure/repository/video.js";
   import { validationResult } from 'express-validator';
 
@@ -117,6 +118,25 @@ import {
       const result = await addCommentToVideo(videoId, updatedVideoData);
       if (result.success) {
         res.status(200).json({ status: 200, message: "Comentario agregado exitosamente" });
+      } else {
+        res.status(404).json({ status: 404, message: "Video no encontrado o ningún cambio realizado " });
+      }
+    } catch (error) {
+      console.error("Error al actualizar video:", error);
+      res.status(500).json({ status: 500, message: "Error al actualizar video" });
+    }
+  }
+
+  export async function addLikeVideo(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const videoId = Number(req.params.id);
+      try {
+      const result = await likeVideo(videoId);
+      if (result.success) {
+        res.status(200).json({ status: 200, message: "like agregado exitosamente" });
       } else {
         res.status(404).json({ status: 404, message: "Video no encontrado o ningún cambio realizado " });
       }
