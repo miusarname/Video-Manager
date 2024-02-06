@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { createVideo, allVideos, getVideoById, updateVideo, deleteVideo, getVideosByVisibility, getVideosByLikes, addCommentToVideo, likeVideo } from '../app/video/infrastructure/repository/video.js';
+import { createVideo, allVideos, getVideoById, updateVideo, deleteVideo, getVideosByVisibility, getVideosByLikes, addCommentToVideo, likeVideo,getVideosByUser } from '../app/video/infrastructure/repository/video.js';
 
 describe('Funciones de manejo de videos', () => {
   var videoId;
@@ -81,6 +81,29 @@ describe('Funciones de manejo de videos', () => {
   it('Debería manejar correctamente el intento de dar like a un video inexistente', async () => {
     const result = await likeVideo('videoInexistenteID');
     expect(result).to.have.property('error');
+  });
+
+  it('Debería devolver un array de vídeos para un usuario existente', async () => {
+    // Simula un ID de usuario existente
+    const userId = 1;
+
+    // Llama a la función getVideosByUser con el ID de usuario simulado
+    const userVideos = await getVideosByUser(userId);
+
+    // Verifica si la respuesta es un array
+    expect(userVideos).to.be.an('array');
+    // Aquí podrías agregar más aserciones para verificar la estructura de los vídeos, etc.
+  });
+
+  it('Debería devolver un array vacío para un usuario inexistente', async () => {
+    // Simula un ID de usuario que no existe
+    const userId = '999';
+
+    // Llama a la función getVideosByUser con el ID de usuario simulado
+    const userVideos = await getVideosByUser(userId);
+
+    // Verifica si la respuesta es un array vacío
+    expect(userVideos).to.be.an('array').that.is.empty;
   });
 
 });
