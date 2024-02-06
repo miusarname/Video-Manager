@@ -7,13 +7,14 @@
   "scripts": {
     "dev": "nodemon --quiet index.js",
     "tsc": "tsc -w",
-    "test": "jest"
+    "test": "mocha test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/preset-env": "^7.23.9",
+    "chai": "^5.0.3",
     "class-validator": "0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/mongodb": "^4.0.7",
+    "mocha": "^10.2.0",
     "mongodb": "^5.7.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",
