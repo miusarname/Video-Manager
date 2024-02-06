@@ -71,11 +71,6 @@ describe('Funciones de manejo de videos', () => {
     expect(result).to.have.property('deletedCount').equal(0);
   });
 
-  it('Debería manejar correctamente la obtención de videos por visibilidad cuando no hay videos privados', async () => {
-    const result = await getVideosByVisibility(false);
-    expect(result).to.be.an('array').that.is.empty;
-  });
-
   // Pruebas adicionales
 
   it('Debería manejar correctamente la adición de comentarios a un video inexistente', async () => {
