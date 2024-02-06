@@ -8,21 +8,22 @@ import {
   getVideosByVisibilityHandler, // Agregado
   getVideosByLikesHandler,
   postNewComment,
-  addLikeVideo
+  addLikeVideo,
+  getVideoByUserIdHandler,
 } from "./video.controller.js";
-import {validarToken} from '../../../auth/JWT.js'
+import { validarToken, validarTokenGets } from "../../../auth/JWT.js";
 import { videoDTO } from "../domain/dto/video.model.js";
 
 export const videos = Router();
 
-videos.get("/", getAllVideos);
+videos.get("/", validarTokenGets, getAllVideos);
 videos.get("/likes", getVideosByLikesHandler);
+videos.get("/user/:id", getVideoByUserIdHandler);
 videos.post("/comment/:id", postNewComment);
 videos.post("/like/:id", addLikeVideo);
 videos.get("/:id", getVideoByIdHandler);
-videos.post("/", videoDTO,validarToken,createVideoHandler);
-videos.put("/:id", validarToken,updateVideoHandler);
-videos.delete("/:id", validarToken,deleteVideoHandler);
+videos.post("/", videoDTO, validarToken, createVideoHandler);
+videos.put("/:id", validarToken, updateVideoHandler);
+videos.delete("/:id", validarToken, deleteVideoHandler);
 // Nueva ruta para obtener videos públicos o privados
 videos.get("/visibility/:visibility", getVideosByVisibilityHandler);
-

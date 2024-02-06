@@ -6,7 +6,8 @@ import {
     deleteVideo,
     getVideosByLikes,
     addCommentToVideo,
-    likeVideo
+    likeVideo,
+    getVideosByUser
   } from "../infrastructure/repository/video.js";
   import { validationResult } from 'express-validator';
 
@@ -156,5 +157,21 @@ export async function updateVideoHandler(req, res) {
     } catch (error) {
       console.error("Error al actualizar video:", error);
       res.status(500).json({ status: 500, message: "Error al actualizar video" });
+    }
+  }
+
+  export async function getVideoByUserIdHandler(req, res) {
+    const userId =Number(req.params.id);
+    try {
+      const video = await getVideosByUser(userId);
+      console.log(video)
+      if (video) {
+        res.status(200).json({ status: 200, video: video });
+      } else {
+        res.status(404).json({ status: 404, message: "Video no encontrado" });
+      }
+    } catch (error) {
+      console.error("Error al obtener el video:", error);
+      res.status(500).json({ status: 500, message: "Error al obtener el video" });
     }
   }
