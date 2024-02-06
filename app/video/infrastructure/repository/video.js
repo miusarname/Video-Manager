@@ -126,4 +126,36 @@ export const addCommentToVideo = async (videoId, comment) => {
   }
 };
 
+// Función para dar like a un video
+export const likeVideo = async (videoId) => {
+  try {
+    // Buscar el video por su ID
+    const video = await getVideoById(Number(videoId));
+
+    // Verificar si el video existe
+    if (!video) {
+      console.error(`El video con ID ${videoId} no existe.`);
+      return { error: `El video con ID ${videoId} no existe.`, completed: false };
+    }
+
+    // Incrementar en 1 la cantidad de likes usando findOneAndUpdate
+    const updatedVideo = await videos.findOneAndUpdate(
+      { id: Number(videoId) },
+      { $inc: { likes: 1 } },
+      { returnDocument: "after" } // Devuelve el documento actualizado
+    );
+
+    // Verificar si la actualización fue exitosa
+    if (updatedVideo) {
+      return { success: true, message: 'Se dio like al video correctamente.' };
+    } else {
+      return { error: 'No se pudo dar like al video.', completed: false };
+    }
+  } catch (error) {
+    console.error('Error al dar like al video:', error);
+    return { error: 'Error al dar like al video.', completed: false };
+  }
+};
+
+
 
