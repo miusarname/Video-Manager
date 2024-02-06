@@ -33,14 +33,18 @@ export const createVideo = async (videoToInsert) => {
 };
 
 // Operación de Leer Todos los Videos
-export const allVideos = async () => {
+export const allVideos = async (verify) => {
+  const query = verify ? {} : { isPublic: true };
+  const errorMessage = verify ? "todos los videos" : "todos los videos públicos";
+
   try {
-    return await videos.find().toArray();
+    return await videos.find(query).toArray();
   } catch (error) {
-    console.error("Error al obtener todos los videos:", error);
+    console.error(`Error al obtener ${errorMessage}:`, error);
     return [];
   }
 };
+
 
 // Operación de Leer un Video por ID
 export const getVideoById = async (ids) => {
@@ -55,12 +59,14 @@ export const getVideoById = async (ids) => {
 // Operación de Actualizar Video
 export const updateVideo = async (ids, updatedVideoData) => {
   try {
-    return await videos.updateOne({ id: ids }, { $set: updatedVideoData });
+    const result = await videos.updateOne({ id: ids }, { $set: updatedVideoData });
+    return result;
   } catch (error) {
     console.error("Error al actualizar el video:", error);
-    return { error: error, completed: false };
+    return { error, completed: false };
   }
 };
+
 
 // Operación de Eliminar Video
 export const deleteVideo = async (ids) => {
@@ -103,59 +109,63 @@ export const addCommentToVideo = async (videoId, comment) => {
 
     if (!video) {
       console.error(`El video con ID ${videoId} no existe.`);
-      return { error: `El video con ID ${videoId} no existe.`, completed: false };
+      return {
+        error: `El video con ID ${videoId} no existe.`,
+        completed: false,
+      };
     }
 
-    const numberL = video.comments.length;
     video.comments.push(comment);
 
-    const updatedVideo = await updateVideo(Number(videoId), video);
-    console.log(numberL)
+    await updateVideo(Number(videoId), video);
 
-    const video2 = await getVideoById(Number(videoId));
-    console.log(video2.comments.length)
+    const updatedVideo = await getVideoById(Number(videoId));
 
-    if (await numberL <= await video2.comments.length) {
-      return { success: true, message: 'Comentario agregado correctamente.' };
+    if (updatedVideo.comments.length > video.comments.length) {
+      return { success: true, message: "Comentario agregado correctamente." };
     } else {
-      return { error: 'No se pudo agregar el comentario al video.', completed: false };
+      return {
+        error: "No se pudo agregar el comentario al video.",
+        completed: false,
+      };
     }
   } catch (error) {
-    console.error('Error al agregar el comentario al video:', error);
-    return { error: 'Error al agregar el comentario al video.', completed: false };
+    console.error("Error al agregar el comentario al video:", error);
+    return {
+      error: "Error al agregar el comentario al video.",
+      completed: false,
+    };
   }
 };
+
 
 // Función para dar like a un video
 export const likeVideo = async (videoId) => {
   try {
-    // Buscar el video por su ID
     const video = await getVideoById(Number(videoId));
 
-    // Verificar si el video existe
     if (!video) {
       console.error(`El video con ID ${videoId} no existe.`);
-      return { error: `El video con ID ${videoId} no existe.`, completed: false };
+      return {
+        error: `El video con ID ${videoId} no existe.`,
+        completed: false,
+      };
     }
 
-    // Incrementar en 1 la cantidad de likes usando findOneAndUpdate
     const updatedVideo = await videos.findOneAndUpdate(
       { id: Number(videoId) },
       { $inc: { likes: 1 } },
-      { returnDocument: "after" } // Devuelve el documento actualizado
+      { returnDocument: "after" }
     );
 
-    // Verificar si la actualización fue exitosa
     if (updatedVideo) {
-      return { success: true, message: 'Se dio like al video correctamente.' };
+      return { success: true, message: "Se dio like al video correctamente." };
     } else {
-      return { error: 'No se pudo dar like al video.', completed: false };
+      return { error: "No se pudo dar like al video.", completed: false };
     }
   } catch (error) {
-    console.error('Error al dar like al video:', error);
-    return { error: 'Error al dar like al video.', completed: false };
+    console.error("Error al dar like al video:", error);
+    return { error: "Error al dar like al video.", completed: false };
   }
 };
-
-
 

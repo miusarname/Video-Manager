@@ -24,15 +24,16 @@ async function siguienteId(coleccion) {
 // Operación de Crear Usuario
 export const createUser = async (userToInsert) => {
   try {
-    // Establece verified como falso por defecto
     userToInsert.verified = false;
     userToInsert.id = await siguienteId("user");
+    
     return await users.insertOne(userToInsert);
   } catch (error) {
-    console.error("Error al crear usuario:",error);
+    console.error("Error al crear usuario:", error);
     return { error: error, completed: false };
   }
 };
+
 
 // Operación de Leer Todos los Usuarios
 export const allUsers = async () => {

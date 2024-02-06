@@ -12,8 +12,16 @@ import {
 
   
   export async function getAllVideos(req, res) {
+    var verified;
     try {
-      const videos = await allVideos();
+      console.log(req.user);
+      if (req.user) {
+        verified=true
+      }else{
+        verified = false
+      }
+      console.log(verified)
+      const videos = await allVideos(verified);
       res.status(200).json({ status: 200, videos: videos });
     } catch (error) {
       console.error("Error al obtener todos los videos:", error);
@@ -51,25 +59,30 @@ import {
     }
   }
   
-  export async function updateVideoHandler(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const videoId = Number(req.params.id);
-    const updatedVideoData = req.body;
-    try {
-      const result = await updateVideo(videoId, updatedVideoData);
-      if (result.modifiedCount > 0) {
-        res.status(200).json({ status: 200, message: "Video actualizado exitosamente" });
-      } else {
-        res.status(404).json({ status: 404, message: "Video no encontrado o ningún cambio realizado" });
-      }
-    } catch (error) {
-      console.error("Error al actualizar video:", error);
-      res.status(500).json({ status: 500, message: "Error al actualizar video" });
-    }
+export async function updateVideoHandler(req, res) {
+  const errors = validationResult(req);
+  
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
+
+  const videoId = Number(req.params.id);
+  const updatedVideoData = req.body;
+
+  try {
+    const result = await updateVideo(videoId, updatedVideoData);
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ status: 200, message: "Video actualizado exitosamente" });
+    } else {
+      res.status(404).json({ status: 404, message: "Video no encontrado o ningún cambio realizado" });
+    }
+  } catch (error) {
+    console.error("Error al actualizar video:", error);
+    res.status(500).json({ status: 500, message: "Error al actualizar video" });
+  }
+}
+
   
   export async function deleteVideoHandler(req, res) {
     const videoId = Number(req.params.id);
