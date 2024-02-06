@@ -169,3 +169,13 @@ export const likeVideo = async (videoId) => {
   }
 };
 
+// Operación para obtener vídeos por usuario
+export const getVideosByUser = async (userId) => {
+  try {
+    const userVideos = await videos.find({ user: userId }).toArray();
+    return userVideos;
+  } catch (error) {
+    console.error("Error al obtener vídeos por usuario:", error);
+    return [];
+  }
+};
