@@ -38,3 +38,35 @@ export const videoDTO = [
     .isNumeric()
     .withMessage("El indicador de user debe ser de tipo numerico")
 ];
+
+export const videoDTOPut = [
+  body("title")
+    .optional()
+    .isString()
+    .withMessage("El título debe ser de tipo string"),
+  body("description")
+    .optional()
+    .isString()
+    .withMessage("La descripción debe ser de tipo string"),
+  body("credits")
+    .optional()
+    .isString()
+    .withMessage("Los créditos deben ser de tipo string"),
+  body("publishDate")
+    .optional()
+    .isISO8601()
+    .toDate()
+    .withMessage("La fecha de publicación debe tener un formato ISO8601 válido"),
+  body("isPublic")
+    .optional()
+    .isBoolean()
+    .withMessage("El indicador de público/privado debe ser de tipo booleano"),
+  body("likes")
+    .optional()
+    .isNumeric()
+    .withMessage("El indicador de likes debe ser de tipo numérico"),
+  body("user")
+    .optional()
+    .isNumeric()
+    .withMessage("El indicador de user debe ser de tipo numérico")
+];

@@ -7,7 +7,8 @@ import {
     getVideosByLikes,
     addCommentToVideo,
     likeVideo,
-    getVideosByUser
+    getVideosByUser,
+    getVideosByVisibility
   } from "../infrastructure/repository/video.js";
   import { validationResult } from 'express-validator';
 
@@ -101,7 +102,7 @@ export async function updateVideoHandler(req, res) {
   }
   
   export async function getVideosByVisibilityHandler(req, res) {
-    const isPublic = req.params.visibility === 'public';
+    const isPublic = req.params.visibility == 'public';
     try {
       const videos = await getVideosByVisibility(isPublic);
       res.status(200).json({ status: 200, videos: videos });

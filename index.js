@@ -25,7 +25,7 @@ index.use(express.json());
 // Swagger config
 const options = {
   swaggerDefinition: {
-    openapi: "3.0.0",
+    openapi: "3.1.0",
     info: {
       title: "Video Manager",
       version: "1.0.0",
@@ -36,8 +36,17 @@ const options = {
         url: "http://localhost:3000",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        }
+      }
+    },
   },
-  apis: ["index.js", "./app/user/aplication/user.routes.js"], // Ruta a los archivos donde se definen las rutas de la API
+  apis: ["index.js", "./app/user/aplication/user.routes.js","./app/video/aplication/video.routes.js"], // Ruta a los archivos donde se definen las rutas de la API
 };
 
 const specs = swaggerJsdoc(options);
