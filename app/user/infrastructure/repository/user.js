@@ -1,6 +1,10 @@
 // Importa la conexión a la base de datos
 import { con } from "../database/atlas.js";
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv";
+
+
+dotenv.config("../");
 
 // Obtiene la conexión y la colección de usuarios
 const db = await con();
