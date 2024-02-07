@@ -4,10 +4,26 @@ import {
   getUserById,
   updateUser,
   deleteUser,
-  verifyUser
+  verifyUser,
+  checkDuplicateUser,
+  sendVerificationEmail
 } from "../infrastructure/repository/user.js";
 import { validationResult } from 'express-validator';
+import { SignJWT, jwtVerify } from "jose";
 
+
+export async function crearTokenIntern(role) {
+  const enconder = new TextEncoder();
+  if (role == "user") {
+    const jwtConstructor = await new SignJWT({role})
+      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+      .setIssuedAt()
+      .sign(enconder.encode(process.env.JWT_KEY));
+    return ({ status: 200, token: jwtConstructor });
+  } else {
+    return({ status: 400, message: "Invalid Credentials required" });
+  }
+}
 
 export async function getAllUsers(req, res) {
   try {
@@ -96,5 +112,42 @@ export async function verifyUserHandler(req, res) {
   } catch (error) {
     console.error("Error al verificar usuario:", error);
     res.status(500).json({ status: 500, message: "Error al verificar usuario" });
+  }
+}
+
+export async function logginHandler(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const {firstname,email} = req.body;
+  try {
+    const newUser = await checkDuplicateUser(firstname,email);
+    if (newUser) {
+      const token = await crearTokenIntern("user")
+      res.status(200).json({ status: 200, newUser: token });
+    }
+  } catch (error) {
+    console.error("Error al crear usuario:",error);
+    res.status(500).json({ status: 500, message: "Error al crear usuario" });
+  }
+}
+
+export async function verificationEmail(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const {lastName,email} = req.body;
+  try {
+    const newUser = await sendVerificationEmail(email,lastName);
+    if (newUser) {
+      res.status(200).json({ status: 200, message: "Revisa el email proporsionado,te debio haber llegado un email" });
+    }else{
+      res.status(500).json({ status: 500, message: "Error al Verificar usuario" });
+    }
+  } catch (error) {
+    console.error("Error al Verificar usuario:",error);
+    res.status(500).json({ status: 500, message: "Error al Verificar usuario" });
   }
 }

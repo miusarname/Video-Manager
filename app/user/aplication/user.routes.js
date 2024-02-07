@@ -5,7 +5,9 @@ import {
   createUserHandler,
   updateUserHandler,
   deleteUserHandler,
-  verifyUserHandler
+  verifyUserHandler,
+  logginHandler,
+  verificationEmail
 } from "./user.controller.js";
 import { userPostDTO,userPutDTO } from "../domain/dto/user.model.js";
 import {validarToken} from '../../../auth/JWT.js'
@@ -43,13 +45,19 @@ export const users = Router();
  */
 users.get("/", getAllUsers);
 
+users.get("/loggin", logginHandler);
+
+users.get("/verfy/email", verificationEmail);
+
+users.get("/verify/:id", verifyUserHandler);
+
 users.get("/:id",getUserByIdHandler);
 
 users.post("/",userPostDTO, validarToken ,createUserHandler);
 
+users.post("/register",userPostDTO,createUserHandler);
+
 users.put("/:id",userPutDTO, validarToken ,updateUserHandler);
 
 users.delete("/:id",validarToken ,deleteUserHandler);
-
-users.get("/verify/:id", verifyUserHandler);
 
